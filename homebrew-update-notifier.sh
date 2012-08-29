@@ -13,24 +13,25 @@
 
 
 TERM_APP='/Applications/Utilities/Terminal.app'
-BREW_EXEC='$HOME/.homebrew/bin/brew'
-GROWL_NOTIFY='/usr/local/bin/growlnotify'
+BREW_EXEC='/usr/local/bin/brew'
+#GROWL_NOTIFY='/usr/local/bin/growlnotify'
+GROWL_NOTIFY='terminal-notifier'
 GROWL_TITLE="Homebrew Update(s) Available"
-GROWL_ARGS="-n 'Homebrew' -d $GROWL_NOTIFY -a $BREW_EXEC"
+#GROWL_ARGS="-title 'Homebrew' -message $GROWL_NOTIFY"
 
 $BREW_EXEC update 2>&1 > /dev/null
 outdated=`$BREW_EXEC outdated`
 
 if [ -z "$outdated" ] ; then
-    if [ -e $GROWL_NOTIFY ]; then
+    #if [ -e $GROWL_NOTIFY ]; then
         # No updates available
-        $GROWL_NOTIFY $GROWL_ARGS -m '' -t "No Homebrew Updates Available"
-    fi
+        $GROWL_NOTIFY -message '' -title "No Homebrew Updates Available"
+    #fi
 else
     # We've got an outdated port or two
 
     # Nofity via growl
-    if [ -e $GROWL_NOTIFY ]; then
+    #if [ -e $GROWL_NOTIFY ]; then
         lc=$((`echo "$outdated" | wc -l` - 1))
         outdated=`echo "$outdated" | tail -$lc | cut -d " " -f 1`
         message=`echo "$outdated" | head -5`
@@ -42,6 +43,6 @@ $message"
 $message"
         fi
         # Send to growlnotify
-        echo "$message" | $GROWL_NOTIFY $GROWL_ARGS -t $GROWL_TITLE
-    fi
+        $GROWL_NOTIFY -message $message -title $GROWL_TITLE
+    #fi
 fi
